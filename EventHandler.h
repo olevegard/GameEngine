@@ -11,12 +11,8 @@
 // 			1. Simpler
 // 			2. Code is freely avaible and easy to modify
 // 			3. Every enumeration is a stored as enum class, so you can't use the wrong enum value or implicitly convert to int
-enum class EventType
-{
-	Keyboard,
-	Mouse,
-	Quit
-};
+//
+// Buttons ( keyboard, mouse, joystick )
 enum class ButtonEventType
 {
 	Pressed,
@@ -27,10 +23,35 @@ enum class ButtonState
 	Up,
 	Down,
 };
+// Keyboard
 struct KeyboardEvent
 {
 	ButtonEventType eventType;
 	SDL_Keycode key;
+};
+// Mouse
+enum class MouseButton
+{
+	Left,
+	Middle,
+	Right,
+};
+struct MouseMotionEvent
+{
+	SDL_Point newPos;
+	SDL_Point relativePos;
+};
+struct MouseButtonEvent
+{
+	ButtonEventType eventType;
+	MouseButton button;
+};
+// Main event class
+enum class EventType
+{
+	Keyboard,
+	Mouse,
+	Quit
 };
 struct Event
 {
@@ -39,7 +60,10 @@ struct Event
 	{
 	}
 	EventType type;
+
+	// Event Types
 	KeyboardEvent keyboard;
+	MouseMotionEvent mouse;
 };
 class EventHandler
 {
