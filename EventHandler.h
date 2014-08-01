@@ -12,19 +12,19 @@ enum class EventType
 	Mouse,
 	Quit
 };
-enum class KeyboardEventType
+enum class ButtonEventType
 {
 	Pressed,
 	Released,
 };
-enum class KeyboardKeyState
+enum class ButtonState
 {
 	Up,
 	Down,
 };
 struct KeyboardEvent
 {
-	KeyboardEventType eventType;
+	ButtonEventType eventType;
 	SDL_Keycode key;
 };
 struct Event
@@ -45,7 +45,7 @@ class EventHandler
 	void ClearEvents();
 	std::vector< Event > GetEvents();
 
-	KeyboardKeyState GetKeyState( SDL_Keycode key ) const;
+	ButtonState GetKeyState( SDL_Keycode key ) const;
 	bool IsKeyDown( SDL_Keycode key ) const;
 
 	private:

@@ -28,7 +28,7 @@ void EventHandler::HandleKeyBoard( const SDL_Event &event )
 			AddQuitEvent();
 	}
 }
-KeyboardKeyState EventHandler::GetKeyState( SDL_Keycode key ) const
+ButtonState EventHandler::GetKeyState( SDL_Keycode key ) const
 {
 	SDL_EventType eventType ;
 
@@ -42,13 +42,13 @@ KeyboardKeyState EventHandler::GetKeyState( SDL_Keycode key ) const
 	}
 
 	if ( eventType == SDL_KEYDOWN )
-		return KeyboardKeyState::Down;
+		return ButtonState::Down;
 	else
-		return KeyboardKeyState::Up;
+		return ButtonState::Up;
 }
 bool EventHandler::IsKeyDown( SDL_Keycode key ) const
 {
-	return GetKeyState( key ) == KeyboardKeyState::Down;
+	return GetKeyState( key ) == ButtonState::Down;
 }
 void EventHandler::AddKeyboardEvent( const SDL_Event &event )
 {
@@ -60,9 +60,9 @@ Event EventHandler::CreateKeyboardEvent( const SDL_Event &event ) const
 	keyEvent.keyboard.key = event.key.keysym.sym; 
 
 	if ( event.type == SDL_KEYUP )
-		keyEvent.keyboard.eventType = KeyboardEventType::Released;
+		keyEvent.keyboard.eventType = ButtonEventType::Released;
 	else
-		keyEvent.keyboard.eventType = KeyboardEventType::Pressed;
+		keyEvent.keyboard.eventType = ButtonEventType::Pressed;
 
 	return keyEvent;
 }
