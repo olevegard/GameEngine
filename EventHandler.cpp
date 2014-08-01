@@ -5,14 +5,25 @@ void EventHandler::Update( )
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
-		if ( event.type == SDL_QUIT )
-			AddQuitEvent();
-		else if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP )
-			HandleKeyBoard( event );
-		else if ( event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP )
-			HandleMouseButton( event );
-		else  if ( event.type == SDL_MOUSEMOTION )
-			HandleMouseMove( event );
+		switch ( event.type )
+		{
+			case SDL_QUIT :
+				AddQuitEvent();
+				break;
+			case SDL_KEYDOWN : 
+			case SDL_KEYUP :
+				HandleKeyBoard( event );
+				break;
+			case SDL_MOUSEBUTTONDOWN :
+			case SDL_MOUSEBUTTONUP :
+				HandleMouseButton( event );
+				break;
+			case SDL_MOUSEMOTION :
+				HandleMouseMove( event );
+				break;
+			default :
+				break;
+		}
 	}
 }
 void EventHandler::AddQuitEvent()
