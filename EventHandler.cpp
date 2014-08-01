@@ -1,5 +1,20 @@
 #include "EventHandler.h"
 
+void EventHandler::Update( )
+{
+	SDL_Event event;
+	while ( SDL_PollEvent( &event ) )
+	{
+		if ( event.type == SDL_QUIT )
+			AddQuitEvent();
+		else if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP )
+			HandleKeyBoard( event );
+	}
+}
+void EventHandler::AddQuitEvent()
+{
+	events.emplace_back( Event( EventType::Quit ) );
+}
 void EventHandler::HandleKeyBoard( const SDL_Event &event )
 {
 	if ( event.type != keyCode[ event.key.keysym.sym ] )
@@ -7,22 +22,35 @@ void EventHandler::HandleKeyBoard( const SDL_Event &event )
 		// Save new state of the button
 		keyCode[ event.key.keysym.sym ] = static_cast< SDL_EventType > ( event.type );
 
-		AddKeyPressEvent( event );
+		AddKeyboardEvent( event );
+
+		if ( event.key.keysym.sym == SDLK_ESCAPE )
+			AddQuitEvent();
 	}
 }
-void EventHandler::AddKeyPressEvent( const SDL_Event &event )
+
+void EventHandler::AddKeyboardEvent( const SDL_Event &event )
 {
-	keyPresses.push_back( CreateKeyPressEvent( event ) );;
+	events.push_back( CreateKeyboardEvent( event ) );
 }
-KeyPressEvent EventHandler::CreateKeyPressEvent( const SDL_Event &event ) const
+Event EventHandler::CreateKeyboardEvent( const SDL_Event &event ) const
 {
-	KeyPressEvent keyEvent;
-	keyEvent.key = event.key.keysym.sym; 
+	Event keyEvent( EventType::Keyboard );
+	keyEvent.keyboard.key = event.key.keysym.sym; 
 
 	if ( event.type == SDL_KEYUP )
-		keyEvent.type = KeyPressEventType::Released;
+		keyEvent.keyboard.eventType = KeyboardEventType::Released;
 	else
-		keyEvent.type = KeyPressEventType::Pressed;
+		keyEvent.keyboard.eventType = KeyboardEventType::Pressed;
 
 	return keyEvent;
+}
+std::vector< Event > EventHandler::GetEvents()
+{
+	return events;
+}
+void EventHandler::ClearEvents()
+{
+	//keyPresses.clear();
+	events.clear();
 }

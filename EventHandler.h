@@ -6,44 +6,56 @@
 #include <SDL2/SDL.h>
 
 // Event handling
-enum class KeyPressEventType
+enum class EventType
+{
+	Keyboard,
+	Mouse,
+	Quit
+};
+enum class KeyboardEventType
 {
 	Pressed,
 	Released,
 };
-
-struct KeyPressEvent
+struct KeyboardEvent
 {
-	KeyPressEventType type;
+	KeyboardEventType eventType;
 	SDL_Keycode key;
 };
-
+struct Event
+{
+	Event( EventType type_ )
+		:	type( type_ )
+	{
+	}
+	EventType type;
+	KeyboardEvent keyboard;
+};
 class EventHandler
 {
 	public:
+
+	void Update( );
+
+	void ClearEvents();
+	std::vector< Event > GetEvents();
+	private:
+
 	void HandleKeyBoard( const SDL_Event &event );
 
-	std::vector< KeyPressEvent > GetKeyPresses() const
-	{
-		return keyPresses;
-	}
-	void ClearEvents()
-	{
-		keyPresses.clear();
-	}
-
-	private:
-	// Holds the current state of every button
-	// For the actual key press or release event, see below
-	std::map< SDL_Keycode, SDL_EventType > keyCode;
+	void AddQuitEvent();
+	void AddKeyboardEvent( const SDL_Event &event );
+	Event CreateKeyboardEvent( const SDL_Event &event ) const;
 
 	// Only holds key press events for this frame
 	// I.E. if a button was pressed or released this frame
 	// It will not contain button states that was the same in the previous event
 	// So if you hold the button down then release it, only the first press and release will register
-	std::vector< KeyPressEvent > keyPresses;
+	//std::vector< KeyPressEvent > keyPresses;
+	std::vector< Event > events;
 
-	void AddKeyPressEvent( const SDL_Event &event );
-	KeyPressEvent CreateKeyPressEvent( const SDL_Event &event ) const;
+
+	// Holds the current state of every button
+	std::map< SDL_Keycode, SDL_EventType > keyCode;
 };
 
