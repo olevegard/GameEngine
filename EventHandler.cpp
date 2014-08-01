@@ -28,7 +28,28 @@ void EventHandler::HandleKeyBoard( const SDL_Event &event )
 			AddQuitEvent();
 	}
 }
+KeyboardKeyState EventHandler::GetKeyState( SDL_Keycode key ) const
+{
+	SDL_EventType eventType ;
 
+	try
+	{
+		eventType = keyCode.at( key );
+	}
+	catch ( std::out_of_range &e )
+	{
+		eventType = SDL_KEYUP;
+	}
+
+	if ( eventType == SDL_KEYDOWN )
+		return KeyboardKeyState::Down;
+	else
+		return KeyboardKeyState::Up;
+}
+bool EventHandler::IsKeyDown( SDL_Keycode key ) const
+{
+	return GetKeyState( key ) == KeyboardKeyState::Down;
+}
 void EventHandler::AddKeyboardEvent( const SDL_Event &event )
 {
 	events.push_back( CreateKeyboardEvent( event ) );

@@ -17,6 +17,11 @@ enum class KeyboardEventType
 	Pressed,
 	Released,
 };
+enum class KeyboardKeyState
+{
+	Up,
+	Down,
+};
 struct KeyboardEvent
 {
 	KeyboardEventType eventType;
@@ -39,8 +44,11 @@ class EventHandler
 
 	void ClearEvents();
 	std::vector< Event > GetEvents();
-	private:
 
+	KeyboardKeyState GetKeyState( SDL_Keycode key ) const;
+	bool IsKeyDown( SDL_Keycode key ) const;
+
+	private:
 	void HandleKeyBoard( const SDL_Event &event );
 
 	void AddQuitEvent();
@@ -53,7 +61,6 @@ class EventHandler
 	// So if you hold the button down then release it, only the first press and release will register
 	//std::vector< KeyPressEvent > keyPresses;
 	std::vector< Event > events;
-
 
 	// Holds the current state of every button
 	std::map< SDL_Keycode, SDL_EventType > keyCode;
