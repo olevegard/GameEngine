@@ -35,6 +35,7 @@ enum class MouseButton
 	Left,
 	Middle,
 	Right,
+	Unknown,
 };
 struct MouseMotionEvent
 {
@@ -50,7 +51,8 @@ struct MouseButtonEvent
 enum class EventType
 {
 	Keyboard,
-	Mouse,
+	MouseButton,
+	MouseMotion,
 	Quit
 };
 struct Event
@@ -63,7 +65,8 @@ struct Event
 
 	// Event Types
 	KeyboardEvent keyboard;
-	MouseMotionEvent mouse;
+	MouseMotionEvent mouseMove;
+	MouseButtonEvent mouseButton;
 };
 class EventHandler
 {
@@ -77,13 +80,26 @@ class EventHandler
 	ButtonState GetKeyState( SDL_Keycode key ) const;
 	bool IsKeyDown( SDL_Keycode key ) const;
 
+	ButtonState GetMouseButtonState(  MouseButton button ) const;
+	bool IsMouseButtonDown( MouseButton button ) const;
+
 	private:
 	void HandleKeyBoard( const SDL_Event &event );
 	void HandleMouse( const SDL_Event &event );
 
 	void AddQuitEvent();
 	void AddKeyboardEvent( const SDL_Event &event );
+	void AddMouseEvent( const SDL_Event &event );
+
 	Event CreateKeyboardEvent( const SDL_Event &event ) const;
+	Event CreateMouseEvent( const SDL_Event &event ) const;
+
+	// SDL uses #defines for mouse button types internal. Change this to enum classes for better safety
+	MouseButton ConvertMouseButtonToEnum( uint8_t SDLButtonID ) const;
+	uint8_t ConvertMouseButtonToID( MouseButton button ) const;
+
+	ButtonState ConvertButtonStateFromSDL ( uint32_t SDLButtonID, EventType type ) const;
+	uint32_t ConvertButtonStateToSDL ( ButtonState button, EventType type ) const;
 
 	// Only holds key press events for this frame
 	// I.E. if a button was pressed or released this frame
@@ -94,6 +110,10 @@ class EventHandler
 
 	// Holds the current state of every button
 	std::map< SDL_Keycode, SDL_EventType > keyCode;
-	std::map< int8_t, int8_t > mouseButton;
+
+	// Button ( MouseButton::Left, MouseButton::Middle, MouseButton::Right, MouseButton::Unknown )
+	// State ( SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN )
+	std::map< MouseButton, ButtonState > mouseButton;
 };
+
 

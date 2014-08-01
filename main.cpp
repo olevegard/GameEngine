@@ -63,45 +63,45 @@ void RunGame()
 {
 	while ( !quit )
 	{
-		HandleInput();
+		input.Update( );
 
 		Render();
 
-		for ( const auto &event : input.GetKeyPresses() )
+		for ( const auto &event : input.GetEvents() )
 		{
-			std::cout << "Button with ID : " << event.key << " was : ";
-
-			if ( event.type == KeyPressEventType::Pressed )
-				std::cout << "Pressed\n";
-			else
-				std::cout << "Released\n";
+			if ( event.type == EventType::Keyboard )
+			{
+				if ( event.keyboard.key == SDLK_LEFT )
+				{
+					std::cout << "Left : ";
+					if ( event.keyboard.eventType == ButtonEventType::Pressed )
+						std::cout << " prssed\n";
+					else
+						std::cout << " released\n";
+				}
+			}
+			else if ( event.type == EventType::Quit )
+				quit = true;
+			else if ( event.type == EventType::MouseButton )
+			{
+				if ( event.mouseButton.button == MouseButton::Left )
+				{
+					std::cout << "Left mosue button : ";
+					if ( event.mouseButton.eventType == ButtonEventType::Pressed )
+						std::cout << "pressed\n";
+					else
+						std::cout << "released\n";
+				}
+			}
 		}
+		if ( input.IsKeyDown( SDLK_RIGHT )  )
+			std::cout << time(NULL) << " right is down\n";
 
+		if ( input.IsMouseButtonDown( MouseButton::Right )  )
+			std::cout << time(NULL) << " right is down\n";
 		input.ClearEvents();
 	}
 }
-
-void HandleInput()
-{
-	SDL_Event event;
-	while ( SDL_PollEvent( &event ) )
-	{
-
-		if ( event.type == SDL_QUIT )
-			quit = true;
-		else if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP )
-		{
-			input.HandleKeyBoard( event );
-			switch ( event.key.keysym.sym )
-			{
-				case SDLK_ESCAPE:
-					quit = true;
-					break;
-			}
-		}
-	}
-}
-
 void InitializeObjects()
 {
 	background.LoadTexture( renderer, "background.png" );
@@ -146,7 +146,7 @@ bool SetupTTF( const std::string &fontName)
 	}
 
 	font = TTF_OpenFont( fontName.c_str(), 38 );
-	
+
 	if ( font == nullptr )
 	{
 		std::cout << " Failed to load font : " << SDL_GetError() << std::endl;
