@@ -9,16 +9,11 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-#include <vector>
-#include <map>
 #include <iostream>
+#include <vector>
 
-//#include "Timer.h"			// Delta time, average FPS calculation
-#include "Texture.h"		// Regular textures ( Enemy, Player )
-//#include "Texture_Text.h"	// Text textures ( 'solid', 'blended', 'shaded' ), average FPS display
-
-//#include "Enemy.h"
-//#include "Player.h"
+#include "Texture.h"
+#include "EventHandler.h"
 
 // Setup
 bool InitEverything();
@@ -50,32 +45,7 @@ bool quit = false;
 Texture background;
 Texture object;
 
-// Event handling
-enum class KeyPressEventType
-{
-	Pressed,
-	Released,
-};
-
-struct KeyPressEvent
-{
-	KeyPressEventType type;
-	SDL_Keycode key;
-};
-
-// Holds the current state of every button
-// For the actual key press or release event, see below
-std::map< SDL_Keycode, SDL_EventType > keyCode;
-
-// Only holds key press events for this frame
-// I.E. if a button was pressed or released this frame
-// It will not contain button states that was the same in the previous event
-// So if you hold the button down then release it, only the first press and release will register
-std::vector< KeyPressEvent > keyPresses;
-
-void HandleKeyBoard( const SDL_Event &event );
-void AddKeyPressEvent( const SDL_Event &event );
-KeyPressEvent CreateKeyPressEvent( const SDL_Event &event );
+EventHandler input;
 
 int main( int argc, char* args[] )
 {
@@ -97,7 +67,7 @@ void RunGame()
 
 		Render();
 
-		for ( const auto &event : keyPresses )
+		for ( const auto &event : input.GetKeyPresses() )
 		{
 			std::cout << "Button with ID : " << event.key << " was : ";
 
@@ -107,7 +77,7 @@ void RunGame()
 				std::cout << "Released\n";
 		}
 
-		keyPresses.clear();
+		input.ClearEvents();
 	}
 }
 
@@ -116,11 +86,12 @@ void HandleInput()
 	SDL_Event event;
 	while ( SDL_PollEvent( &event ) )
 	{
+
 		if ( event.type == SDL_QUIT )
 			quit = true;
 		else if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP )
 		{
-			HandleKeyBoard( event );
+			input.HandleKeyBoard( event );
 			switch ( event.key.keysym.sym )
 			{
 				case SDLK_ESCAPE:
@@ -130,32 +101,7 @@ void HandleInput()
 		}
 	}
 }
-KeyPressEvent CreateKeyPressEvent( const SDL_Event &event )
-{
-	KeyPressEvent keyEvent;
-	keyEvent.key = event.key.keysym.sym; 
 
-	if ( event.type == SDL_KEYUP )
-		keyEvent.type = KeyPressEventType::Released;
-	else
-		keyEvent.type = KeyPressEventType::Pressed;
-
-	return keyEvent;
-}
-void AddKeyPressEvent( const SDL_Event &event )
-{
-	keyPresses.push_back( CreateKeyPressEvent( event ) );;
-}
-void HandleKeyBoard( const SDL_Event &event )
-{
-	if ( event.type != keyCode[ event.key.keysym.sym ] )
-	{
-		// Save new state of the button
-		keyCode[ event.key.keysym.sym ] = static_cast< SDL_EventType > ( event.type );
-
-		AddKeyPressEvent( event );
-	}
-}
 void InitializeObjects()
 {
 	background.LoadTexture( renderer, "background.png" );
