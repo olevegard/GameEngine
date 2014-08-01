@@ -66,6 +66,8 @@ void EventHandler::HandleMouseMove( const SDL_Event &event )
 	newEvent.mouseMove.relativePos.y = event.motion.yrel;
 
 	events.push_back( newEvent );
+
+	mousePoint = newEvent.mouseMove.newPos;
 }
 ButtonState EventHandler::GetKeyState( SDL_Keycode key ) const
 {
@@ -104,6 +106,10 @@ ButtonState EventHandler::GetMouseButtonState(  MouseButton button ) const
 bool EventHandler::IsMouseButtonDown( MouseButton button ) const
 {
 	return GetMouseButtonState( button ) == ButtonState::Down;
+}
+SDL_Point EventHandler::GetMousePoint( ) const
+{
+	return mousePoint;
 }
 void EventHandler::AddKeyboardEvent( const SDL_Event &event )
 {

@@ -83,6 +83,8 @@ class EventHandler
 	ButtonState GetMouseButtonState(  MouseButton button ) const;
 	bool IsMouseButtonDown( MouseButton button ) const;
 
+	SDL_Point GetMousePoint( ) const;
+
 	private:
 	void HandleKeyBoard( const SDL_Event &event );
 	void HandleMouseButton( const SDL_Event &event );
@@ -101,6 +103,8 @@ class EventHandler
 
 	ButtonState ConvertButtonStateFromSDL ( uint32_t keyEventID, EventType type ) const;
 	uint32_t ConvertButtonStateToSDL ( ButtonState button, EventType type ) const;
+
+	SDL_Point mousePoint;
 
 	// Only holds key press events for this frame
 	// I.E. if a button was pressed or released this frame

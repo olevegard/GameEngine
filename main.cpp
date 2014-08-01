@@ -103,6 +103,10 @@ void RunGame()
 
 		if ( input.IsMouseButtonDown( MouseButton::Right )  )
 			std::cout << time(NULL) << " right is down\n";
+
+		SDL_Point pt = input.GetMousePoint( );
+
+		std::cout << "Mouse point is : " << pt.x << ", " << pt.y << std::endl;
 		input.ClearEvents();
 	}
 }
