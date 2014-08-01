@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Font.h"
 #include "Texture.h"
 #include "EventHandler.h"
 
@@ -33,7 +34,8 @@ SDL_Point windowMiddle;
 SDL_Window* window;
 SDL_Renderer* renderer;
 
-TTF_Font* font;
+//TTF_Font* font;
+Font font;
 
 bool quit = false;
 
@@ -53,7 +55,6 @@ int main( int argc, char* args[] )
 	RunGame();
 
 	// Free our fonts
-	TTF_CloseFont( font );
 }
 void RunGame()
 {
@@ -147,21 +148,7 @@ bool InitEverything()
 }
 bool SetupTTF( const std::string &fontName)
 {
-	if ( TTF_Init() == -1 )
-	{
-		std::cout << " Failed to initialize TTF : " << SDL_GetError() << std::endl;
-		return false;
-	}
-
-	font = TTF_OpenFont( fontName.c_str(), 38 );
-
-	if ( font == nullptr )
-	{
-		std::cout << " Failed to load font : " << SDL_GetError() << std::endl;
-		return false;
-	}
-
-	return true;
+	return font.Init( fontName, 38 );
 }
 bool InitSDL()
 {
