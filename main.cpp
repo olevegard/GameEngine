@@ -22,14 +22,10 @@ bool CreateWindow();
 bool CreateRenderer();
 void SetupRenderer();
 bool SetupTTF( const std::string &fontName ); // Our new function for setting uo SDL_TTF
-
-
 void InitializeObjects();
-// Update ( happens every frame )
-//
+
 void Render();
 void RunGame();
-void HandleInput();
 
 SDL_Rect windowRect = { 900, 300, 600, 800 };
 SDL_Point windowMiddle;
