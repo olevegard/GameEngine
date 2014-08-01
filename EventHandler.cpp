@@ -19,10 +19,12 @@ void EventHandler::AddQuitEvent()
 }
 void EventHandler::HandleKeyBoard( const SDL_Event &event )
 {
-	if ( event.type != keyCode[ event.key.keysym.sym ] )
+	ButtonState state = ConvertButtonStateFromSDL( event.type, EventType::Keyboard );
+
+	if ( state != keyCode[ event.key.keysym.sym ] )
 	{
 		// Save new state of the button
-		keyCode[ event.key.keysym.sym ] = static_cast< SDL_EventType > ( event.type );
+		keyCode[ event.key.keysym.sym ] = state;
 
 		AddKeyboardEvent( event );
 
@@ -38,28 +40,23 @@ void EventHandler::HandleMouse( const SDL_Event &event )
 	if ( state != mouseButton[ button ] )
 	{
 		mouseButton[ button ] = state;
-		//MouseButton button = ConvertMouseButtonToEnum( event.button.button );
 		AddMouseEvent( event );
-
 	}
 }
 ButtonState EventHandler::GetKeyState( SDL_Keycode key ) const
 {
-	SDL_EventType eventType ;
+	ButtonState state;
 
 	try
 	{
-		eventType = keyCode.at( key );
+		state = keyCode.at( key );
 	}
 	catch ( std::out_of_range &e )
 	{
-		eventType = SDL_KEYUP;
+		state = ButtonState::Up;
 	}
 
-	if ( eventType == SDL_KEYDOWN )
-		return ButtonState::Down;
-	else
-		return ButtonState::Up;
+	return state;
 }
 bool EventHandler::IsKeyDown( SDL_Keycode key ) const
 {
@@ -94,7 +91,7 @@ void EventHandler::AddMouseEvent( const SDL_Event &event )
 }
 Event EventHandler::CreateKeyboardEvent( const SDL_Event &event ) const
 {
-	Event keyEvent( EventType::MouseButton );
+	Event keyEvent( EventType::Keyboard );
 	keyEvent.keyboard.key = event.key.keysym.sym; 
 
 	if ( event.type == SDL_KEYUP )
@@ -157,13 +154,20 @@ uint8_t EventHandler::ConvertMouseButtonToID( MouseButton button ) const
 
 	return -1;
 }
-ButtonState EventHandler::ConvertButtonStateFromSDL ( uint32_t SDLButtonID, EventType type ) const
+ButtonState EventHandler::ConvertButtonStateFromSDL ( uint32_t keyEventID, EventType type ) const
 {
 	ButtonState state;
 
 	if ( type == EventType::MouseButton )
 	{
-		if ( SDLButtonID == SDL_MOUSEBUTTONDOWN )
+		if ( keyEventID == SDL_MOUSEBUTTONDOWN )
+			state = ButtonState::Down;
+		else
+			state = ButtonState::Up;
+	}
+	else if ( type == EventType::Keyboard )
+	{
+		if ( keyEventID == SDL_KEYDOWN )
 			state = ButtonState::Down;
 		else
 			state = ButtonState::Up;

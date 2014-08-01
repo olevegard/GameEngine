@@ -98,7 +98,7 @@ class EventHandler
 	MouseButton ConvertMouseButtonToEnum( uint8_t SDLButtonID ) const;
 	uint8_t ConvertMouseButtonToID( MouseButton button ) const;
 
-	ButtonState ConvertButtonStateFromSDL ( uint32_t SDLButtonID, EventType type ) const;
+	ButtonState ConvertButtonStateFromSDL ( uint32_t keyEventID, EventType type ) const;
 	uint32_t ConvertButtonStateToSDL ( ButtonState button, EventType type ) const;
 
 	// Only holds key press events for this frame
@@ -109,7 +109,7 @@ class EventHandler
 	std::vector< Event > events;
 
 	// Holds the current state of every button
-	std::map< SDL_Keycode, SDL_EventType > keyCode;
+	std::map< SDL_Keycode, ButtonState > keyCode;
 
 	// Button ( MouseButton::Left, MouseButton::Middle, MouseButton::Right, MouseButton::Unknown )
 	// State ( SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN )
