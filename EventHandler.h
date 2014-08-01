@@ -5,7 +5,12 @@
 
 #include <SDL2/SDL.h>
 
-// Event handling
+// Event structures
+// Notes :
+// 		The struvture of the events might seem siilar to those of SLD_Event, but theere are some differences:
+// 			1. Simpler
+// 			2. Code is freely avaible and easy to modify
+// 			3. Every enumeration is a stored as enum class, so you can't use the wrong enum value or implicitly convert to int
 enum class EventType
 {
 	Keyboard,
