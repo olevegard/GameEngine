@@ -79,6 +79,7 @@ class EventHandler
 
 	private:
 	void HandleKeyBoard( const SDL_Event &event );
+	void HandleMouse( const SDL_Event &event );
 
 	void AddQuitEvent();
 	void AddKeyboardEvent( const SDL_Event &event );
@@ -93,5 +94,6 @@ class EventHandler
 
 	// Holds the current state of every button
 	std::map< SDL_Keycode, SDL_EventType > keyCode;
+	std::map< int8_t, int8_t > mouseButton;
 };
 

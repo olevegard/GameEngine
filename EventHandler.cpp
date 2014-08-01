@@ -28,6 +28,12 @@ void EventHandler::HandleKeyBoard( const SDL_Event &event )
 			AddQuitEvent();
 	}
 }
+void EventHandler::HandleMouse( const SDL_Event &event )
+{
+	if ( event.type != keyCode[ event.key.keysym.sym ] )
+	{
+	}
+}
 ButtonState EventHandler::GetKeyState( SDL_Keycode key ) const
 {
 	SDL_EventType eventType ;
