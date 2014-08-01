@@ -10,7 +10,9 @@ void EventHandler::Update( )
 		else if ( event.type == SDL_KEYDOWN || event.type == SDL_KEYUP )
 			HandleKeyBoard( event );
 		else if ( event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP )
-			HandleMouse( event );
+			HandleMouseButton( event );
+		else  if ( event.type == SDL_MOUSEMOTION )
+			HandleMouseMove( event );
 	}
 }
 void EventHandler::AddQuitEvent()
@@ -32,7 +34,7 @@ void EventHandler::HandleKeyBoard( const SDL_Event &event )
 			AddQuitEvent();
 	}
 }
-void EventHandler::HandleMouse( const SDL_Event &event )
+void EventHandler::HandleMouseButton( const SDL_Event &event )
 {
 	MouseButton button = ConvertMouseButtonToEnum( event.button.button );
 	ButtonState state = ConvertButtonStateFromSDL( event.type, EventType::MouseButton );
@@ -42,6 +44,17 @@ void EventHandler::HandleMouse( const SDL_Event &event )
 		mouseButton[ button ] = state;
 		AddMouseEvent( event );
 	}
+}
+void EventHandler::HandleMouseMove( const SDL_Event &event )
+{
+	Event newEvent( EventType::MouseMotion );
+	newEvent.mouseMove.newPos.x = event.motion.x;
+	newEvent.mouseMove.newPos.y = event.motion.y;
+
+	newEvent.mouseMove.relativePos.x = event.motion.xrel;
+	newEvent.mouseMove.relativePos.y = event.motion.yrel;
+
+	events.push_back( newEvent );
 }
 ButtonState EventHandler::GetKeyState( SDL_Keycode key ) const
 {

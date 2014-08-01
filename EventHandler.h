@@ -85,7 +85,8 @@ class EventHandler
 
 	private:
 	void HandleKeyBoard( const SDL_Event &event );
-	void HandleMouse( const SDL_Event &event );
+	void HandleMouseButton( const SDL_Event &event );
+	void HandleMouseMove( const SDL_Event &event );
 
 	void AddQuitEvent();
 	void AddKeyboardEvent( const SDL_Event &event );

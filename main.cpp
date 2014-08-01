@@ -89,7 +89,15 @@ void RunGame()
 						std::cout << "released\n";
 				}
 			}
+			else if ( event.type == EventType::MouseMotion )
+			{
+				std::cout << "Move move\n"
+					<< "\tTo : "     << event.mouseMove.newPos.x      << ", " << event.mouseMove.newPos.y
+					<< "\n\tFrom : " << event.mouseMove.relativePos.x << ", " << event.mouseMove.relativePos.y
+					<< std::endl;
+			}
 		}
+
 		if ( input.IsKeyDown( SDLK_RIGHT )  )
 			std::cout << time(NULL) << " right is down\n";
 
