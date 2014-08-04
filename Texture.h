@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include "Rect.h"
+
 struct Speed
 {
 	double x;
@@ -27,11 +29,11 @@ struct Texture
 
 	// Collision detection
 	bool CheckCollision( const Texture &other ) const;
-	bool CheckCollision( const SDL_Rect &other ) const;
-	bool IsOutOfBounds( const SDL_Rect &windowSize ) const;
+	bool CheckCollision( const Rect &other ) const;
+	bool IsOutOfBounds( const Rect &windowSize ) const;
 
 	// Setters
-	void SetRect( SDL_Rect r );
+	void SetRect( Rect r );
 	void SetPos( SDL_Point p );
 	void SetSpeed( Speed s );
 
@@ -42,7 +44,7 @@ struct Texture
 
 	void CenterAtPoint( const SDL_Point &p );
 
-	SDL_Rect GetRect() const;
+	Rect GetRect() const;
 	Speed GetSpeed( ) const;
 	private:
 
@@ -60,7 +62,7 @@ struct Texture
 	// Position
 	double x;
 	double y;
-	SDL_Rect rect;
+	Rect rect;
 
 	SDL_Texture* texture;
 

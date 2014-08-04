@@ -33,6 +33,14 @@ struct Rect : public SDL_Rect
 		x = x_;
 		y = y_;
 	}
+	void Set( const Rect &rect )
+	{
+		x = rect.x;
+		y = rect.y;
+
+		w = rect.w;
+		h = rect.h;
+	}
 	bool CheckCollision( const Rect &other ) const
 	{
 		// Find edges of rect1
