@@ -70,6 +70,23 @@ struct Rect : public SDL_Rect
 
 		return true;
 	}
+	bool IsOutOfBounds( const Rect &windowSize ) const
+	{
+		if ( x > ( windowSize.x + windowSize.w ) )
+			return true;
+
+		if ( ( x + w ) < windowSize.x )
+			return true;
+
+		if (  y > ( windowSize.y + windowSize.h ) )
+			return true;
+
+		if ( ( y + h ) < ( windowSize.y ) )
+			return true;
+
+		// Not out fo bounds
+		return false;
+	}
 	void MoveLeft( int32_t amount )
 	{
 		x -= amount;
