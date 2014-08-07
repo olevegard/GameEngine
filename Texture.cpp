@@ -89,20 +89,7 @@ bool Texture::CheckCollision( const Rect &other ) const
 }
 bool Texture::IsOutOfBounds( const Rect &windowSize ) const
 {
-	if ( rect.x > windowSize.w )
-		return true;
-
-	if ( ( rect.x + rect.w ) < 0 )
-		return true;
-
-	if (  rect.y > windowSize.h )
-		return true;
-
-	if ( ( rect.y + rect.h ) < 0 )
-		return true;
-
-	// Not out fo bounds
-	return false;
+	return rect.IsOutOfBounds( windowSize );
 }
 void Texture::MoveLeft( int32_t amount )
 {
