@@ -15,11 +15,14 @@ class Window
 
 		return true;
 	}
-	bool CreateWindow( Rect windowRect )
+	bool CreateWindow( SDL_Point pos, SDL_Point size )
 	{
 		InitSDL();
 
-		window = SDL_CreateWindow( "Server", windowRect.x, windowRect.y, windowRect.w, windowRect.h, 0 );
+		windowPos = pos;
+		windowSize = size;
+
+		window = SDL_CreateWindow( "Server", pos.x, pos.y, size.x, size.y, 0 );
 
 		if ( window == nullptr )
 		{
@@ -29,7 +32,16 @@ class Window
 
 		return true;
 	}
+	SDL_Window* GetWindow() const
+	{
+		return window;
+	}
+	SDL_Point GetSize() const
+	{
+		return windowSize;
+	}
 	private:
-	Rect windowRect;
-		SDL_Window* window;
+	SDL_Point windowPos;
+	SDL_Point windowSize;
+	SDL_Window* window;
 };
