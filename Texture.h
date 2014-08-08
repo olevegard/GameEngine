@@ -47,11 +47,23 @@ struct Texture
 	Rect GetRect() const;
 	Speed GetSpeed( ) const;
 
+	SDL_Texture* GetTexture() const
+	{
+		return texture;
+	}
+
+	const Rect* GetRectPtr() const
+	{
+		return &rect;
+	}
+
 	// Converts surface to SDL_Texture* and call SetTextre() with that SDL_Texture*
 	void SetTexture( SDL_Renderer* renderer, SDL_Surface* surface );
 
 	// Frees previous and sets texture to text
 	void SetTexture( SDL_Texture *text );
+
+
 
 	private:
 

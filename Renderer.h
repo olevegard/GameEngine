@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "Window.h"
+#include "Texture.h"
 
 class Renderer
 {
@@ -44,12 +45,17 @@ class Renderer
 	// Target rect = the rect you want to render it to
 	void RenderPart( SDL_Texture* texture, SDL_Rect sourceRect, SDL_Rect targetRect )
 	{
-		SDL_RenderCopy( renderer, texture, sourceRect, &targetRect );
+		SDL_RenderCopy( renderer, texture, &sourceRect, &targetRect );
 	}
 	// Renders entire image to the entire screen ( ie background image )
 	void RenderBackground( SDL_Texture* texture )
 	{
 		SDL_RenderCopy( renderer, texture, nullptr, nullptr );
+	}
+
+	void RenderTexture( const Texture &texture )
+	{
+		SDL_RenderCopy( renderer, texture.GetTexture(), nullptr, texture.GetRectPtr() );
 	}
 	void SetLogicalSize( SDL_Point pt )
 	{

@@ -9,12 +9,18 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-#include <iostream>
 #include <vector>
+#include <iostream>
 
-#include "Font.h"
-#include "Texture.h"
-#include "EventHandler.h"
+#include "Window.h"			// Delta time, average FPS calculation
+#include "Renderer.h"			// Delta time, average FPS calculation
+
+#include "Timer.h"			// Delta time, average FPS calculation
+#include "Texture.h"		// Regular textures ( Enemy, Player )
+#include "Texture_Text.h"	// Text textures ( 'solid', 'blended', 'shaded' ), average FPS display
+
+#include "Enemy.h"
+#include "Player.h"
 
 // Setup
 bool InitEverything();
@@ -23,27 +29,43 @@ bool CreateWindow();
 bool CreateRenderer();
 void SetupRenderer();
 bool SetupTTF( const std::string &fontName ); // Our new function for setting uo SDL_TTF
-void InitializeObjects();
 
+void InitializeObjects();
+void AddEnemies( int32_t count );
+void AddEnemy( int32_t height );
+
+// Update ( happens every frame )
 void Render();
 void RunGame();
+void HandleInput();
+void UpdateObjects( double delta );
 
-SDL_Rect windowRect = { 900, 300, 600, 800 };
+SDL_Rect windowRect = { 0, 0, 600, 800 };
 SDL_Point windowMiddle;
 
-SDL_Window* window;
-SDL_Renderer* renderer;
+Renderer newRenderer;
+Window newWindow;
 
-//TTF_Font* font;
-Font font;
+TTF_Font* font;
+TTF_Font* bigFont;
 
 bool quit = false;
 
 // Objects
+Player player;
 Texture background;
-Texture object;
+Texture topBar;
+Texture bottomBar;
 
-EventHandler input;
+Texture_Text fpsCounter;
+Texture_Text textSolid;
+Texture_Text textShaded;
+Texture_Text textBlended;
+
+std::vector< Enemy > enemies;
+
+
+Timer timer;
 
 int main( int argc, char* args[] )
 {
@@ -55,74 +77,133 @@ int main( int argc, char* args[] )
 	RunGame();
 
 	// Free our fonts
+	TTF_CloseFont( font );
+	TTF_CloseFont( bigFont );
 }
 void RunGame()
 {
 	while ( !quit )
 	{
-		input.Update( );
+		HandleInput();
+
+		//fpsCounter.RenderValue( renderer, "FPS", timer.GetAverageFPS() );
+		double delta = timer.GetDelta();
+		UpdateObjects( delta );
 
 		Render();
+	}
+}
 
-		for ( const auto &event : input.GetEvents() )
+void HandleInput()
+{
+	SDL_Event event;
+	while ( SDL_PollEvent( &event ) )
+	{
+		if ( event.type == SDL_QUIT )
+			quit = true;
+		else if ( event.type == SDL_KEYDOWN )
 		{
-			if ( event.type == EventType::Keyboard )
+			switch ( event.key.keysym.sym )
 			{
-				if ( event.keyboard.key == SDLK_LEFT )
-				{
-					std::cout << "Left : ";
-					if ( event.keyboard.eventType == ButtonEventType::Pressed )
-						std::cout << " prssed\n";
-					else
-						std::cout << " released\n";
-				}
-			}
-			else if ( event.type == EventType::Quit )
-				quit = true;
-			else if ( event.type == EventType::MouseButton )
-			{
-				if ( event.mouseButton.button == MouseButton::Left )
-				{
-					std::cout << "Left mosue button : ";
-					if ( event.mouseButton.eventType == ButtonEventType::Pressed )
-						std::cout << "pressed\n";
-					else
-						std::cout << "released\n";
-				}
-			}
-			else if ( event.type == EventType::MouseMotion )
-			{
-				std::cout << "Move move\n"
-					<< "\tTo : "     << event.mouseMove.newPos.x      << ", " << event.mouseMove.newPos.y
-					<< "\n\tFrom : " << event.mouseMove.relativePos.x << ", " << event.mouseMove.relativePos.y
-					<< std::endl;
+				case SDLK_ESCAPE:
+					quit = true;
+					break;
+				case SDLK_RIGHT:
+					player.MoveRight( 20 );
+					break;
+				case SDLK_LEFT:
+					player.MoveLeft( 20 );
+					break;
+				case SDLK_DOWN:
+					player.MoveDown( 20 );
+					break;
+				case SDLK_UP:
+					player.MoveUp( 20 );
+					break;
+				default :
+					break;
 			}
 		}
+	}
+}
+void UpdateObjects( double delta )
+{
+	player.CheckFinishLine( topBar.GetRect().y + topBar.GetRect().h, windowRect );
 
-		if ( input.IsKeyDown( SDLK_RIGHT )  )
-			std::cout << time(NULL) << " right is down\n";
+	for (  auto &p : enemies )
+	{
+		p.Update( delta );
 
-		if ( input.IsMouseButtonDown( MouseButton::Right )  )
-			std::cout << time(NULL) << " right is down\n";
+		if ( player.CheckCollision( p ) )
+			player.ResetPosition( windowRect );
 
-		SDL_Point pt = input.GetMousePoint( );
-
-		std::cout << "Mouse point is : " << pt.x << ", " << pt.y << std::endl;
-		input.ClearEvents();
+		p.CheckBounds( windowRect );
 	}
 }
 void InitializeObjects()
 {
-	background.LoadTexture( renderer, "background.png" );
+	/*
+	textShaded.Init( bigFont, { 255, 0, 255, 255 }, { 0, 0, 255, 255 } );
+	textShaded.RenderText_Shaded( renderer, "Shaded" );
+	textShaded.CenterAtPoint( windowMiddle );
+
+	textBlended.Init( bigFont, { 255, 255, 0, 255 }, { 0, 0, 255, 255 } );
+	textBlended.RenderText_Blended( renderer, "Blended" );
+	textBlended.CenterAtPoint( { windowMiddle.x, windowMiddle.y - 160 } );
+
+	textSolid.Init( bigFont, { 255, 255, 255, 255 }, { 0, 0, 0, 255 } ); 
+	textSolid.RenderText_Solid( renderer, "Solid" );
+	textSolid.CenterAtPoint( { windowMiddle.x, windowMiddle.y + 160 } );
+	*/
+
+	background.LoadTexture( newRenderer.renderer, "background_600x800.png" );
+
+	bottomBar.LoadTexture( newRenderer.renderer, "bar_600x40.png" );
+	bottomBar.SetPos( { 0, windowRect.h - 40 } );
+
+	topBar.LoadTexture( newRenderer.renderer, "bar_600x40.png" );
+	player.LoadTexture( newRenderer.renderer, "player.png" );
+
+	AddEnemies( 15 );
+}
+void AddEnemies( int32_t count )
+{
+	int32_t lastEnemyPos = 0;
+
+	for ( int32_t i = 0 ; i < count ; ++i )
+	{
+		AddEnemy( lastEnemyPos );
+		lastEnemyPos += 50;
+	}
+}
+void AddEnemy( int32_t height )
+{
+	Enemy enemy( { rand() % 300, height, 20, 20 } );
+	enemy.LoadTexture( newRenderer.renderer, "enemy.png" );
+
+	if ( ( rand() % 2 ) == 0 )
+		enemy.SetSpeed( { 1, 0 } );
+	else
+		enemy.SetSpeed( { -1, 0 } );
+
+	enemies.push_back( enemy );
 }
 void Render()
 {
 	// Clear the window and make it all red
-	SDL_RenderClear( renderer );
+	SDL_RenderClear( newRenderer.renderer );
 
-	background.Render( renderer );
+	newRenderer.RenderTexture( background );
 
-	SDL_RenderPresent( renderer);
+	for (  auto &p : enemies )
+		newRenderer.RenderTexture( p );
+
+	newRenderer.RenderTexture( topBar );
+	newRenderer.RenderTexture( bottomBar );
+	newRenderer.RenderTexture( player );
+
+	// Render the changes above
+	SDL_RenderPresent( newRenderer.renderer);
 }
 // Initialization ++
 // ==================================================================
@@ -131,16 +212,10 @@ bool InitEverything()
 	if ( !InitSDL() )
 		return false;
 
-	if ( !CreateWindow() )
-		return false;
 
-	if ( !CreateRenderer() )
-		return false;
+	newWindow.CreateWindow( { 0, 0 }, { 600, 800 } );
+	newRenderer.Init( newWindow );
 
-	if ( !SetupTTF( "sketchy.ttf" ) )
-		return false;
-
-	SetupRenderer();
 	windowMiddle.x = static_cast< uint32_t > ( windowRect.w * 0.5 );
 	windowMiddle.y = static_cast< uint32_t > ( windowRect.h * 0.5 );
 
@@ -148,7 +223,24 @@ bool InitEverything()
 }
 bool SetupTTF( const std::string &fontName)
 {
-	return font.Init( fontName, 38 );
+	if ( TTF_Init() == -1 )
+	{
+		std::cout << " Failed to initialize TTF : " << SDL_GetError() << std::endl;
+		return false;
+	}
+
+	font = TTF_OpenFont( fontName.c_str(), 38 );
+	bigFont = TTF_OpenFont( fontName.c_str(), 90 );
+	
+	if ( font == nullptr )
+	{
+		std::cout << " Failed to load font : " << SDL_GetError() << std::endl;
+		return false;
+	}
+
+	fpsCounter.Init( font, { 255, 0, 255, 255 }, { 0, 255, 0, 255 } );
+
+	return true;
 }
 bool InitSDL()
 {
@@ -159,36 +251,4 @@ bool InitSDL()
 	}
 
 	return true;
-}
-bool CreateWindow()
-{
-	window = SDL_CreateWindow( "Server", windowRect.x, windowRect.y, windowRect.w, windowRect.h, 0 );
-
-	if ( window == nullptr )
-	{
-		std::cout << "Failed to create window : " << SDL_GetError();
-		return false;
-	}
-
-	return true;
-}
-bool CreateRenderer()
-{
-	renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
-
-	if ( renderer == nullptr )
-	{
-		std::cout << "Failed to create renderer : " << SDL_GetError();
-		return false;
-	}
-
-	return true;
-}
-void SetupRenderer()
-{
-	// Set size of renderer to the same as window
-	SDL_RenderSetLogicalSize( renderer, windowRect.w, windowRect.h );
-
-	// Set color of renderer to red
-	SDL_SetRenderDrawColor( renderer, 255, 0, 0, 255 );
 }
