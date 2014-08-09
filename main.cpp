@@ -64,7 +64,6 @@ Texture_Text textBlended;
 
 std::vector< Enemy > enemies;
 
-
 Timer timer;
 
 int main( int argc, char* args[] )
@@ -211,7 +210,6 @@ bool InitEverything()
 {
 	if ( !InitSDL() )
 		return false;
-
 
 	newWindow.CreateWindow( { 0, 0 }, { 600, 800 } );
 	newRenderer.Init( newWindow );

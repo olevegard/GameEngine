@@ -6,8 +6,10 @@ Font::Font()
 	:	mask( 0 )
 {
 }
-bool Font::Init( const std::string &fontName, int32_t fontSize )
+bool Font::Init( SDL_Renderer* renderer_, const std::string &fontName, int32_t fontSize )
 {
+	renderer = renderer_;
+
 	if ( TTF_WasInit() == 0 )
 	{
 		if ( TTF_Init() == -1 )

@@ -7,6 +7,7 @@
 
 #include "Window.h"
 #include "Texture.h"
+#include "Font.h"
 
 class Renderer
 {
@@ -65,7 +66,12 @@ class Renderer
 	{
 		SDL_SetRenderDrawColor( renderer, 255, clr.r, clr.g, clr.b );
 	}
-
+	Font CreateFont( const std::string &str, int32_t size )
+	{
+		Font font;
+		font.Init( renderer, str, size );
+		return font;
+	}
 	//private:
 	SDL_Renderer* renderer;
 };

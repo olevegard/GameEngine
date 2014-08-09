@@ -17,7 +17,7 @@ class Font
 	public:
 		Font();
 
-		bool Init( const std::string &fontName, int32_t fontSize );
+		bool Init( SDL_Renderer* renderer_, const std::string &fontName, int32_t fontSize );
 
 		void AddFontStyle( FontStyle style );
 		void RemFontStyle( FontStyle style );
