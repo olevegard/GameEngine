@@ -43,6 +43,14 @@ void Renderer::RenderTexture( const Texture &texture )
 {
 	SDL_RenderCopy( renderer, texture.GetTexture(), nullptr, texture.GetRectPtr() );
 }
+void Renderer::RenderClear()
+{
+	SDL_RenderClear( renderer );
+}
+void Renderer::RenderPresent()
+{
+	SDL_RenderPresent( renderer );
+}
 void Renderer::SetLogicalSize( SDL_Point pt )
 {
 	SDL_RenderSetLogicalSize( renderer, pt.x, pt.y );

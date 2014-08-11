@@ -189,8 +189,7 @@ void AddEnemy( int32_t height )
 }
 void Render()
 {
-	// Clear the window and make it all red
-	SDL_RenderClear( newRenderer.renderer );
+	newRenderer.RenderClear();
 
 	newRenderer.RenderTexture( background );
 
@@ -201,8 +200,7 @@ void Render()
 	newRenderer.RenderTexture( bottomBar );
 	newRenderer.RenderTexture( player );
 
-	// Render the changes above
-	SDL_RenderPresent( newRenderer.renderer);
+	newRenderer.RenderPresent();
 }
 // Initialization ++
 // ==================================================================
