@@ -25,9 +25,6 @@
 // Setup
 bool InitEverything();
 bool InitSDL();
-bool CreateWindow();
-bool CreateRenderer();
-void SetupRenderer();
 bool SetupTTF( const std::string &fontName ); // Our new function for setting uo SDL_TTF
 
 void InitializeObjects();
