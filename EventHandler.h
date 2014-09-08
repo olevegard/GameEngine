@@ -72,6 +72,10 @@ class EventHandler
 {
 	public:
 
+	EventHandler()
+		:	quit( false )
+	{
+	}
 	void Update( );
 
 	void ClearEvents();
@@ -84,6 +88,11 @@ class EventHandler
 	bool IsMouseButtonDown( MouseButton button ) const;
 
 	SDL_Point GetMousePoint( ) const;
+
+	bool WasQuit()
+	{
+		return quit;
+	}
 
 	private:
 	void HandleKeyBoard( const SDL_Event &event );
@@ -119,6 +128,9 @@ class EventHandler
 	// Button ( MouseButton::Left, MouseButton::Middle, MouseButton::Right, MouseButton::Unknown )
 	// State ( SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN )
 	std::map< MouseButton, ButtonState > mouseButton;
+
+	// Wether the SDL_Quit even has been recieved
+	bool quit;
 };
 
 

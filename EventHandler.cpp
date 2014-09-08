@@ -28,6 +28,7 @@ void EventHandler::Update( )
 }
 void EventHandler::AddQuitEvent()
 {
+	quit = true;
 	events.emplace_back( Event( EventType::Quit ) );
 }
 void EventHandler::HandleKeyBoard( const SDL_Event &event )
