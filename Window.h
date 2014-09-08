@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Rect.h"
+#include <iostream>
 
 class Window
 {
